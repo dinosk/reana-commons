@@ -27,7 +27,8 @@ import os
 
 SQLALCHEMY_DATABASE_URI = \
     os.getenv('REANA_SQLALCHEMY_DATABASE_URI',
-              'postgresql+psycopg2://postgres@localhost:5432/reana')
+              'postgresql+psycopg2://reana:reana@'
+              'dinosmbp.dyndns.cern.ch:5432/reana')
 
 # BROKER = os.getenv("RABBIT_MQ", 'amqp://test:1234@'
 #                    'message-broker.default.svc.cluster.local//')

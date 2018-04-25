@@ -43,5 +43,5 @@ def init_db():
     """Initialize the DB."""
     import reana_commons.models
     if not database_exists(engine.url):
-        create_database(engine.url)
+        create_database(engine.url, pool_size=150, max_overflow=150)
     Base.metadata.create_all(bind=engine)

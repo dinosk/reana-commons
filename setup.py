@@ -62,7 +62,9 @@ setup_requires = [
     'pytest-runner>=2.7',
 ]
 
-install_requires = []
+install_requires = [
+    'psycopg2-binary>=2.6.1'
+]
 
 packages = find_packages()
 
