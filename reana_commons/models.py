@@ -65,7 +65,7 @@ class Organization(Base, Timestamp):
     __tablename__ = 'organization'
 
     id_ = Column(UUIDType, primary_key=True, default=str(uuid.uuid4()))
-    name = Column(String(255), primary_key=True)
+    name = Column(String(255), primary_key=True, unique=True)
     # database_uri = Column(String(255))
 
 
