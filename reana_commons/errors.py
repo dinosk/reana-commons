@@ -20,12 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization or
 # submit itself to any jurisdiction.
 
-"""Version information for REANA-Commons.
+"""REANA Commons Errors."""
 
-This file is imported by ``reana_commons.__init__``
-and parsed by ``setup.py``.
-"""
+class WorkflowNameError(Exception):
+    """."""
 
-from __future__ import absolute_import, print_function
 
-__version__ = "0.3.1.dev20180917"
+class WorkflowInexistentError(Exception):
+    """."""
