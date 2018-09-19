@@ -23,6 +23,7 @@
 
 import hashlib
 import json
+import logging
 import os
 
 import click
@@ -53,17 +54,20 @@ def click_table_printer(headers, _filter, data):
 def calculate_hash_of_dir(directory, file_list=None):
     """Calculate hash of directory."""
     SHAhash = hashlib.md5()
+    logging.info('calculating hash of dir: {}'.format(directory))
     if not os.path.exists(directory):
         return -1
 
     try:
         for subdir, dirs, files in os.walk(directory):
+            logging.info('files: {}'.format(files))
             for file in files:
                 filepath = os.path.join(subdir, file)
                 if file_list is not None:
                     if filepath not in file_list:
                         continue
                 try:
+                    logging.info('adding file: {}'.format(filepath))
                     f1 = open(filepath, 'rb')
                 except Exception:
                     # You can't open the file for some reason
@@ -79,7 +83,8 @@ def calculate_hash_of_dir(directory, file_list=None):
                         break
                     SHAhash.update(hashlib.md5(buf).hexdigest().encode())
                 f1.close()
-    except Exception:
+    except Exception as e:
+        logging.info('exception: {}'.format(str(e)))
         return -1
     return SHAhash.hexdigest()
 
