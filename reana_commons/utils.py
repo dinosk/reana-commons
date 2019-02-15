@@ -15,6 +15,11 @@ import subprocess
 from hashlib import md5
 
 import click
+from kubernetes.client.rest import ApiException
+from reana_commons.k8s.api_client import (current_k8s_corev1_api_client,
+                                          current_k8s_storagev1_api_client)
+from reana_commons.config import (REANA_CVMFS_PVC_TEMPLATE,
+                                  REANA_CVMFS_SC_TEMPLATE)
 
 
 def click_table_printer(headers, _filter, data):
@@ -193,3 +198,43 @@ def get_workspace_disk_usage(workspace, summarize=False):
         filesizes.append({'name': name[len(workspace):],
                           'size': size})
     return filesizes
+
+
+def render_cvmfs_pvc(name):
+    """Render REANA_CVMFS_PVC_TEMPLATE."""
+    rendered_template = dict(REANA_CVMFS_PVC_TEMPLATE)
+    rendered_template['metadata']['name'] = 'csi-cvmfs-{}-pvc'.format(name)
+    rendered_template['spec']['storageClassName'] = "csi-cvmfs-{}".format(name)
+    return rendered_template
+
+
+def render_cvmfs_sc(name):
+    """Render REANA_CVMFS_SC_TEMPLATE."""
+    rendered_template = dict(REANA_CVMFS_SC_TEMPLATE)
+    rendered_template['metadata']['name'] = "csi-cvmfs-{}".format(name)
+    return rendered_template
+
+
+def create_cvmfs_storage_class(name):
+    """Create CVMFS storage class."""
+    try:
+        current_k8s_storagev1_api_client.\
+            create_storage_class(
+                render_cvmfs_sc(cvmfs_volume_name)
+            )
+    except ApiException as e:
+        if e.status == 409:
+            pass
+
+
+def create_cvmfs_persistent_volume_claim(name):
+    """Create CVMFS persistent volume claim."""
+    try:
+        current_k8s_corev1_api_client.\
+            create_namespaced_persistent_volume_claim(
+                "default",
+                render_cvmfs_pvc(cvmfs_volume_name)
+            )
+    except ApiException as e:
+        if e.status == 409:
+            pass
